@@ -2,7 +2,7 @@
 
 This repository contains the data and code for "Estimating Wildlife Strike Costs at US Airports: A Machine Learning Approach". 
 
-CITATION AN LINK HERE
+CITATION AND LINK HERE
 
 All data cleaning and analyses are performed in R statistical software.
 
