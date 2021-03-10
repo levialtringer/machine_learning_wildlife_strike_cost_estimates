@@ -1,6 +1,10 @@
 # Estimating Wildlife Strike Costs at US Airports: A Machine Learning Approach
 
-This repository contains the data and code for "Estimating Wildlife Strike Costs at US Airports: A Machine Learning Approach". All data cleaning and analyses are performed in R statistical software.
+This repository contains the data and code for "Estimating Wildlife Strike Costs at US Airports: A Machine Learning Approach". 
+
+CITATION AN LINK HERE
+
+All data cleaning and analyses are performed in R statistical software.
 
 The files contained in this repository are:
 
@@ -14,4 +18,4 @@ To generate the cleaned data yourself, run the `clean_nwsd.R` script. This scrip
 
 To perform the analysis and reproduce the objects presented in the paper, work through the `analysis.R` script. The script is annotated for ease of replication.
 
-Any questions can be sent to <levi.altringer@colostate.edu>.
+Questions concerning the analysis and research can be sent to <levi.altringer@colostate.edu>.
