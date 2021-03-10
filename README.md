@@ -4,7 +4,7 @@ This repository contains the data and code for "Estimating Wildlife Strike Costs
 
 The files contained in this repository are:
 
-```
+```bash
 .
 +-- strike_data_raw.csv
 +-- inf_adjust.csv
