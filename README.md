@@ -6,8 +6,8 @@ The files contained in this repository are:
 
 ```bash
 .
-+-- strike_data_raw.csv
-+-- inf_adjust.csv
+|-- strike_data_raw.csv
+|-- inf_adjust.csv
 +-- strike_data_clean.csv
 +-- clean_nwsd.R
 +-- analysis.R
