@@ -2,7 +2,7 @@
 
 This repository contains the data and code for "Estimating Wildlife Strike Costs at US Airports: A Machine Learning Approach".
 
-CITATION AND LINK HERE
+WILL PLACE CITATION AND LINK HERE
 
 All data cleaning and analyses are performed in R statistical software. Certain Python environment dependencies are required to execute the neural network commands from the `keras` and `tensorflow` packages (see <https://tensorflow.rstudio.com/reference/keras/install_keras/>).
 
