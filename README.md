@@ -1,21 +1,20 @@
 # Estimating Wildlife Strike Costs at US Airports: A Machine Learning Approach
 
-This repository contains the data and code for "Estimating Wildlife Strike Costs at US Airports: A Machine Learning Approach". 
+This repository contains the data and code for "Estimating Wildlife Strike Costs at US Airports: A Machine Learning Approach".
 
 CITATION AND LINK HERE
 
-All data cleaning and analyses are performed in R statistical software.
+All data cleaning and analyses are performed in R statistical software. Certain Python environment dependencies are required to execute the neural network commands from the `keras` and `tensorflow` packages (see <https://tensorflow.rstudio.com/reference/keras/install_keras/>).
 
 The files contained in this repository are:
 
-  1. `strike_data_raw.csv`
-  2. `inf_adjust.csv`
-  3. `strike_data_clean.csv`
-  4. `clean_nwsd.R`
-  5. `analysis.R`
+  1. `strike_data_raw_1.csv`
+  2. `strike_data_raw_2.csv`
+  3. `inf_adjust.csv`
+  4. `analysis.R`
+  5. `clean_nwsd.R`
+  6. `functions.R`
 
-To generate the cleaned data yourself, run the `clean_nwsd.R` script. This script draws on the `strike_data_raw.csv` and `inf_adjust.csv` data files to produce the `strike_data_clean.csv` file.
-
-To perform the analysis and reproduce the objects presented in the paper, work through the `analysis.R` script. The script is annotated for ease of replication.
+To perform the analysis and reproduce the objects presented in the paper, work through the `analysis.R` script. At the beginning, this script sources the `clean_nwsd.R` script to join and clean the `strike_data_raw_1.csv` and `strike_data_raw_2.csv` data. Then, the `analysis.R` script uses the user-defined functions sourced from `functions.R` to perfrom the analysis. The script is annotated to aid in replication.
 
 Questions concerning the analysis and research can be sent to <levi.altringer@colostate.edu>.
