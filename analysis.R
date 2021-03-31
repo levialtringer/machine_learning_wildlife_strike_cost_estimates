@@ -187,10 +187,10 @@ cv_folds(df=train_df,folds=num_folds)
 # 1 - Random Forest (ntree = 50, mtry = 20, nodesize = 20):
 generate_accuracy()
 for (i in 1:num_folds) {
-  y_train <- train_df[-fold_indx[[i]],1]
-  y_valid <- train_df[fold_indx[[i]],1]
-  x_train <- train_df[-fold_indx[[i]],2:95]
-  x_valid <- train_df[fold_indx[[i]],2:95]
+  y_train <- train_df[-fold_indx[[i]],2]
+  y_valid <- train_df[fold_indx[[i]],2]
+  x_train <- train_df[-fold_indx[[i]],3:96]
+  x_valid <- train_df[fold_indx[[i]],3:96]
   set.seed(123)
   model <- randomForest(x_train, y = y_train, ntree = 50, mtry = 20, nodesize = 20)
   y_hat <- predict(model, x_valid)
@@ -203,10 +203,10 @@ accuracy50 <- report_accuracy()
 # 2 - Random Forest (ntree = 100, mtry = 20, nodesize = 20):
 generate_accuracy()
 for (i in 1:num_folds) {
-  y_train <- train_df[-fold_indx[[i]],1]
-  y_valid <- train_df[fold_indx[[i]],1]
-  x_train <- train_df[-fold_indx[[i]],2:95]
-  x_valid <- train_df[fold_indx[[i]],2:95]
+  y_train <- train_df[-fold_indx[[i]],2]
+  y_valid <- train_df[fold_indx[[i]],2]
+  x_train <- train_df[-fold_indx[[i]],3:96]
+  x_valid <- train_df[fold_indx[[i]],3:96]
   set.seed(123)
   model <- randomForest(x_train, y = y_train, ntree = 100, mtry = 20, nodesize = 20)
   y_hat <- predict(model, x_valid)
@@ -219,10 +219,10 @@ accuracy100 <- report_accuracy()
 # 3 - Random Forest (ntree = 300, mtry = 20, nodesize = 20):
 generate_accuracy()
 for (i in 1:num_folds) {
-  y_train <- train_df[-fold_indx[[i]],1]
-  y_valid <- train_df[fold_indx[[i]],1]
-  x_train <- train_df[-fold_indx[[i]],2:95]
-  x_valid <- train_df[fold_indx[[i]],2:95]
+  y_train <- train_df[-fold_indx[[i]],2]
+  y_valid <- train_df[fold_indx[[i]],2]
+  x_train <- train_df[-fold_indx[[i]],3:96]
+  x_valid <- train_df[fold_indx[[i]],3:96]
   set.seed(123)
   model <- randomForest(x_train, y = y_train, ntree = 300, mtry = 20, nodesize = 20)
   y_hat <- predict(model, x_valid)
@@ -235,10 +235,10 @@ accuracy300 <- report_accuracy()
 # 4 - Random Forest (ntree = 600, mtry = 20, nodesize = 20):
 generate_accuracy()
 for (i in 1:num_folds) {
-  y_train <- train_df[-fold_indx[[i]],1]
-  y_valid <- train_df[fold_indx[[i]],1]
-  x_train <- train_df[-fold_indx[[i]],2:95]
-  x_valid <- train_df[fold_indx[[i]],2:95]
+  y_train <- train_df[-fold_indx[[i]],2]
+  y_valid <- train_df[fold_indx[[i]],2]
+  x_train <- train_df[-fold_indx[[i]],3:96]
+  x_valid <- train_df[fold_indx[[i]],3:96]
   set.seed(123)
   model <- randomForest(x_train, y = y_train, ntree = 600, mtry = 20, nodesize = 20)
   y_hat <- predict(model, x_valid)
@@ -258,7 +258,7 @@ paste0("MSE when ntree=600: ", round(as.numeric(accuracy600[1,2]), digits = 4))
 # ntree=300 as the best performing model, holding the other hyperparameters constant. However, ntree=600 might produce
 # more accurate results if we changed the "mtry" or "nodesize" parameters. So multiple combinations of different values
 # for different hyperparameters must be inspected to make a final decision concerning which model produces the best
-# predictive performance.
+# predictive performance (i.e., grid search).
 
 # Remove objects from R environment:
 rm(accuracy50, accuracy100, accuracy300, accuracy600, model, model_df, missing_df, test_df, train_df, fold_indx)
@@ -283,14 +283,14 @@ draws = 100
 test_samples <- createDataPartition(test_df$log_cost_real, times = draws, p = 0.65)
 
 # Run linear regression model on all training data:
-model_lm <- lm(log_cost_real ~ ., data = train_df)
+model_lm <- lm(log_cost_real ~ ., data = train_df[,2:95])
 
 # Get the performance of the Linear Regression Model on all test set subsamples:
 test_lm <- c(NULL, NULL, NULL, NULL)
 for (i in 1:draws) {
-  y_hat <- predict(model_lm, test_df[test_samples[[i]],])
-  test_lm <- rbind(test_lm, c(mse(test_df[test_samples[[i]],1],y_hat), rmse(test_df[test_samples[[i]],1],y_hat),
-                              mae(test_df[test_samples[[i]],1],y_hat), rsq(test_df[test_samples[[i]],1],y_hat)))
+  y_hat <- predict(model_lm, test_df[test_samples[[i]],3:95])
+  test_lm <- rbind(test_lm, c(mse(test_df[test_samples[[i]],2],y_hat), rmse(test_df[test_samples[[i]],2],y_hat),
+                              mae(test_df[test_samples[[i]],2],y_hat), rsq(test_df[test_samples[[i]],2],y_hat)))
 }
 test_lm <- cbind(test_lm, c('LR'), c('EXCLUDED'))
 colnames(test_lm) <- c('MSE', 'RMSE', 'MAE', 'R-SQUARE', 'MODEL', 'DESTROYED')
@@ -298,14 +298,14 @@ rownames(test_lm) <- c(1:100)
 
 # Run random forest model on all training data:
 set.seed(123)
-model_rf <- randomForest(train_df[,2:94], y = train_df[,1], ntree = 300, mtry = 20, nodesize = 20)
+model_rf <- randomForest(train_df[,3:95], y = train_df[,2], ntree = 300, mtry = 20, nodesize = 20)
 
 # Get the performance of the Random Forest Model on all test set subsamples:
 test_rf <- c(NULL, NULL, NULL, NULL)
 for (i in 1:draws) {
-  y_hat <- predict(model_rf, test_df[test_samples[[i]],2:94])
-  test_rf <- rbind(test_rf, c(mse(test_df[test_samples[[i]],1],y_hat), rmse(test_df[test_samples[[i]],1],y_hat), 
-                              mae(test_df[test_samples[[i]],1],y_hat), rsq(test_df[test_samples[[i]],1],y_hat)))
+  y_hat <- predict(model_rf, test_df[test_samples[[i]],3:95])
+  test_rf <- rbind(test_rf, c(mse(test_df[test_samples[[i]],2],y_hat), rmse(test_df[test_samples[[i]],2],y_hat), 
+                              mae(test_df[test_samples[[i]],2],y_hat), rsq(test_df[test_samples[[i]],2],y_hat)))
 }
 test_rf <- cbind(test_rf, c('RF'), c('EXCLUDED'))
 colnames(test_rf) <- c('MSE', 'RMSE', 'MAE', 'R-SQUARE', 'MODEL', 'DESTROYED')
@@ -318,8 +318,8 @@ model_nn <- keras_model_sequential() %>%
   layer_dense(units = 55, activation = 'relu') %>% 
   layer_dense(units = 1, activation = 'linear')
 model_nn %>% compile(loss = 'mse', optimizer = 'adam', metrics = list('mse'))
-model_nn %>% fit(as.matrix(train_df[,2:94]),
-                 as.matrix(train_df[,1]),
+model_nn %>% fit(as.matrix(train_df[,3:95]),
+                 as.matrix(train_df[,2]),
                  batch_size = 128,
                  epochs = 20,
                  view_metrics = FALSE)
@@ -327,9 +327,9 @@ model_nn %>% fit(as.matrix(train_df[,2:94]),
 # Get the performance of the Neural Network Model on all test set subsamples:
 test_nn <- c()
 for (i in 1:draws) {
-  y_hat <- model_nn %>% predict(as.matrix(test_df[test_samples[[i]],2:94]))
-  meas <- c(mse(test_df[test_samples[[i]],1],y_hat), rmse(test_df[test_samples[[i]],1],y_hat),
-            mae(test_df[test_samples[[i]],1],y_hat), rsq(test_df[test_samples[[i]],1],y_hat))
+  y_hat <- model_nn %>% predict(as.matrix(test_df[test_samples[[i]],3:95]))
+  meas <- c(mse(test_df[test_samples[[i]],2],y_hat), rmse(test_df[test_samples[[i]],2],y_hat),
+            mae(test_df[test_samples[[i]],2],y_hat), rsq(test_df[test_samples[[i]],2],y_hat))
   test_nn <- rbind(test_nn,meas)
   rm(meas)
 }
@@ -354,14 +354,14 @@ draws = 100
 test_samples <- createDataPartition(test_df$log_cost_real, times = draws, p = 0.65)
 
 # Run linear regression model on all training data:
-model_lm <- lm(log_cost_real ~ ., data = train_df)
+model_lm <- lm(log_cost_real ~ ., data = train_df[,2:96])
 
 # Get the performance of the Linear Regression Model on all test set subsamples:
 test_lm <- c(NULL, NULL, NULL, NULL)
 for (i in 1:draws) {
-  y_hat <- predict(model_lm, test_df[test_samples[[i]],])
-  test_lm <- rbind(test_lm, c(mse(test_df[test_samples[[i]],1],y_hat), rmse(test_df[test_samples[[i]],1],y_hat),
-                              mae(test_df[test_samples[[i]],1],y_hat), rsq(test_df[test_samples[[i]],1],y_hat)))
+  y_hat <- predict(model_lm, test_df[test_samples[[i]],3:96])
+  test_lm <- rbind(test_lm, c(mse(test_df[test_samples[[i]],2],y_hat), rmse(test_df[test_samples[[i]],2],y_hat),
+                              mae(test_df[test_samples[[i]],2],y_hat), rsq(test_df[test_samples[[i]],2],y_hat)))
 }
 test_lm <- cbind(test_lm, c('LR'), c('INCLUDED'))
 colnames(test_lm) <- c('MSE', 'RMSE', 'MAE', 'R-SQUARE', 'MODEL', 'DESTROYED')
@@ -369,14 +369,14 @@ rownames(test_lm) <- c(1:100)
 
 # Run random forest model on all training data:
 set.seed(123)
-model_rf <- randomForest(train_df[,2:95], y = train_df[,1], ntree = 300, mtry = 20, nodesize = 20)
+model_rf <- randomForest(train_df[,3:96], y = train_df[,2], ntree = 300, mtry = 20, nodesize = 20)
 
 # Get the performance of the Random Forest Model on all test set subsamples:
 test_rf <- c(NULL, NULL, NULL, NULL)
 for (i in 1:draws) {
-  y_hat <- predict(model_rf, test_df[test_samples[[i]],2:95])
-  test_rf <- rbind(test_rf, c(mse(test_df[test_samples[[i]],1],y_hat), rmse(test_df[test_samples[[i]],1],y_hat), 
-                              mae(test_df[test_samples[[i]],1],y_hat), rsq(test_df[test_samples[[i]],1],y_hat)))
+  y_hat <- predict(model_rf, test_df[test_samples[[i]],3:96])
+  test_rf <- rbind(test_rf, c(mse(test_df[test_samples[[i]],2],y_hat), rmse(test_df[test_samples[[i]],2],y_hat),
+                              mae(test_df[test_samples[[i]],2],y_hat), rsq(test_df[test_samples[[i]],2],y_hat)))
 }
 test_rf <- cbind(test_rf, c('RF'), c('INCLUDED'))
 colnames(test_rf) <- c('MSE', 'RMSE', 'MAE', 'R-SQUARE', 'MODEL', 'DESTROYED')
@@ -389,8 +389,8 @@ model_nn <- keras_model_sequential() %>%
   layer_dense(units = 55, activation = 'relu') %>% 
   layer_dense(units = 1, activation = 'linear')
 model_nn %>% compile(loss = 'mse', optimizer = 'adam', metrics = list('mse'))
-model_nn %>% fit(as.matrix(train_df[,2:95]),
-                 as.matrix(train_df[,1]),
+model_nn %>% fit(as.matrix(train_df[,3:96]),
+                 as.matrix(train_df[,2]),
                  batch_size = 128,
                  epochs = 20,
                  view_metrics = FALSE)
@@ -398,9 +398,9 @@ model_nn %>% fit(as.matrix(train_df[,2:95]),
 # Get the performance of the Neural Network Model on all test set subsamples:
 test_nn <- c()
 for (i in 1:draws) {
-  y_hat <- model_nn %>% predict(as.matrix(test_df[test_samples[[i]],2:95]))
-  meas <- c(mse(test_df[test_samples[[i]],1],y_hat), rmse(test_df[test_samples[[i]],1],y_hat),
-            mae(test_df[test_samples[[i]],1],y_hat), rsq(test_df[test_samples[[i]],1],y_hat))
+  y_hat <- model_nn %>% predict(as.matrix(test_df[test_samples[[i]],3:96]))
+  meas <- c(mse(test_df[test_samples[[i]],2],y_hat), rmse(test_df[test_samples[[i]],2],y_hat),
+            mae(test_df[test_samples[[i]],2],y_hat), rsq(test_df[test_samples[[i]],2],y_hat))
   test_nn <- rbind(test_nn,meas)
   rm(meas)
 }
@@ -515,14 +515,14 @@ draws = 100
 test_samples <- createDataPartition(test_df$log_cost_real, times = draws, p = 0.65)
 
 # Run linear regression model on all training data:
-model_lm <- lm(log_cost_real ~ ., data = train_df)
+model_lm <- lm(log_cost_real ~ ., data = train_df[,2:96])
 
 # Get the performance of the Linear Regression Model on all test set subsamples:
 test_lm <- c(NULL, NULL, NULL, NULL)
 for (i in 1:draws) {
-  y_hat <- predict(model_lm, test_df[test_samples[[i]],])
-  test_lm <- rbind(test_lm, c(mse(test_df[test_samples[[i]],1],y_hat), rmse(test_df[test_samples[[i]],1],y_hat),
-                              mae(test_df[test_samples[[i]],1],y_hat), rsq(test_df[test_samples[[i]],1],y_hat)))
+  y_hat <- predict(model_lm, test_df[test_samples[[i]],3:96])
+  test_lm <- rbind(test_lm, c(mse(test_df[test_samples[[i]],2],y_hat), rmse(test_df[test_samples[[i]],2],y_hat),
+                              mae(test_df[test_samples[[i]],2],y_hat), rsq(test_df[test_samples[[i]],2],y_hat)))
 }
 test_lm <- cbind(test_lm, c('LR'), c('EXCLUDED'))
 colnames(test_lm) <- c('MSE', 'RMSE', 'MAE', 'R-SQUARE', 'MODEL', 'DESTROYED')
@@ -530,14 +530,14 @@ rownames(test_lm) <- c(1:100)
 
 # Run random forest model on all training data:
 set.seed(123)
-model_rf <- randomForest(train_df[,2:95], y = train_df[,1], ntree = 300, mtry = 20, nodesize = 20)
+model_rf <- randomForest(train_df[,3:96], y = train_df[,2], ntree = 300, mtry = 20, nodesize = 20)
 
 # Get the performance of the Random Forest Model on all test set subsamples:
 test_rf <- c(NULL, NULL, NULL, NULL)
 for (i in 1:draws) {
-  y_hat <- predict(model_rf, test_df[test_samples[[i]],2:95])
-  test_rf <- rbind(test_rf, c(mse(test_df[test_samples[[i]],1],y_hat), rmse(test_df[test_samples[[i]],1],y_hat), 
-                              mae(test_df[test_samples[[i]],1],y_hat), rsq(test_df[test_samples[[i]],1],y_hat)))
+  y_hat <- predict(model_rf, test_df[test_samples[[i]],3:96])
+  test_rf <- rbind(test_rf, c(mse(test_df[test_samples[[i]],2],y_hat), rmse(test_df[test_samples[[i]],2],y_hat), 
+                              mae(test_df[test_samples[[i]],2],y_hat), rsq(test_df[test_samples[[i]],2],y_hat)))
 }
 test_rf <- cbind(test_rf, c('RF'), c('EXCLUDED'))
 colnames(test_rf) <- c('MSE', 'RMSE', 'MAE', 'R-SQUARE', 'MODEL', 'DESTROYED')
@@ -552,8 +552,8 @@ model_nn <- keras_model_sequential() %>%
   layer_dropout(rate = 0.05) %>%
   layer_dense(units = 1, activation = 'linear')
 model_nn %>% compile(loss = 'mse', optimizer = 'adam', metrics = list('mse'))
-model_nn %>% fit(as.matrix(train_df[,2:95]),
-                 as.matrix(train_df[,1]),
+model_nn %>% fit(as.matrix(train_df[,3:96]),
+                 as.matrix(train_df[,2]),
                  batch_size = 128,
                  epochs = 20,
                  view_metrics = FALSE)
@@ -561,9 +561,9 @@ model_nn %>% fit(as.matrix(train_df[,2:95]),
 # Get the performance of the Neural Network Model on all test set subsamples:
 test_nn <- c()
 for (i in 1:draws) {
-  y_hat <- model_nn %>% predict(as.matrix(test_df[test_samples[[i]],2:95]))
-  meas <- c(mse(test_df[test_samples[[i]],1],y_hat), rmse(test_df[test_samples[[i]],1],y_hat),
-            mae(test_df[test_samples[[i]],1],y_hat), rsq(test_df[test_samples[[i]],1],y_hat))
+  y_hat <- model_nn %>% predict(as.matrix(test_df[test_samples[[i]],3:96]))
+  meas <- c(mse(test_df[test_samples[[i]],2],y_hat), rmse(test_df[test_samples[[i]],2],y_hat),
+            mae(test_df[test_samples[[i]],2],y_hat), rsq(test_df[test_samples[[i]],2],y_hat))
   test_nn <- rbind(test_nn,meas)
   rm(meas)
 }
@@ -588,14 +588,14 @@ draws = 100
 test_samples <- createDataPartition(test_df$log_cost_real, times = draws, p = 0.65)
 
 # Run linear regression model on all training data:
-model_lm <- lm(log_cost_real ~ ., data = train_df)
+model_lm <- lm(log_cost_real ~ ., data = train_df[,2:97])
 
 # Get the performance of the Linear Regression Model on all test set subsamples:
 test_lm <- c(NULL, NULL, NULL, NULL)
 for (i in 1:draws) {
-  y_hat <- predict(model_lm, test_df[test_samples[[i]],])
-  test_lm <- rbind(test_lm, c(mse(test_df[test_samples[[i]],1],y_hat), rmse(test_df[test_samples[[i]],1],y_hat),
-                              mae(test_df[test_samples[[i]],1],y_hat), rsq(test_df[test_samples[[i]],1],y_hat)))
+  y_hat <- predict(model_lm, test_df[test_samples[[i]],3:97])
+  test_lm <- rbind(test_lm, c(mse(test_df[test_samples[[i]],2],y_hat), rmse(test_df[test_samples[[i]],2],y_hat),
+                              mae(test_df[test_samples[[i]],2],y_hat), rsq(test_df[test_samples[[i]],2],y_hat)))
 }
 test_lm <- cbind(test_lm, c('LR'), c('INCLUDED'))
 colnames(test_lm) <- c('MSE', 'RMSE', 'MAE', 'R-SQUARE', 'MODEL', 'DESTROYED')
@@ -603,14 +603,14 @@ rownames(test_lm) <- c(1:100)
 
 # Run random forest model on all training data:
 set.seed(123)
-model_rf <- randomForest(train_df[,2:96], y = train_df[,1], ntree = 300, mtry = 20, nodesize = 20)
+model_rf <- randomForest(train_df[,3:97], y = train_df[,2], ntree = 300, mtry = 20, nodesize = 20)
 
 # Get the performance of the Random Forest Model on all test set subsamples:
 test_rf <- c(NULL, NULL, NULL, NULL)
 for (i in 1:draws) {
-  y_hat <- predict(model_rf, test_df[test_samples[[i]],2:96])
-  test_rf <- rbind(test_rf, c(mse(test_df[test_samples[[i]],1],y_hat), rmse(test_df[test_samples[[i]],1],y_hat), 
-                              mae(test_df[test_samples[[i]],1],y_hat), rsq(test_df[test_samples[[i]],1],y_hat)))
+  y_hat <- predict(model_rf, test_df[test_samples[[i]],3:97])
+  test_rf <- rbind(test_rf, c(mse(test_df[test_samples[[i]],2],y_hat), rmse(test_df[test_samples[[i]],2],y_hat), 
+                              mae(test_df[test_samples[[i]],2],y_hat), rsq(test_df[test_samples[[i]],2],y_hat)))
 }
 test_rf <- cbind(test_rf, c('RF'), c('INCLUDED'))
 colnames(test_rf) <- c('MSE', 'RMSE', 'MAE', 'R-SQUARE', 'MODEL', 'DESTROYED')
@@ -625,8 +625,8 @@ model_nn <- keras_model_sequential() %>%
   layer_dropout(rate = 0.05) %>%
   layer_dense(units = 1, activation = 'linear')
 model_nn %>% compile(loss = 'mse', optimizer = 'adam', metrics = list('mse'))
-model_nn %>% fit(as.matrix(train_df[,2:96]),
-                 as.matrix(train_df[,1]),
+model_nn %>% fit(as.matrix(train_df[,3:97]),
+                 as.matrix(train_df[,2]),
                  batch_size = 128,
                  epochs = 20,
                  view_metrics = FALSE)
@@ -634,9 +634,9 @@ model_nn %>% fit(as.matrix(train_df[,2:96]),
 # Get the performance of the Neural Network Model on all test set subsamples:
 test_nn <- c()
 for (i in 1:draws) {
-  y_hat <- model_nn %>% predict(as.matrix(test_df[test_samples[[i]],2:96]))
-  meas <- c(mse(test_df[test_samples[[i]],1],y_hat), rmse(test_df[test_samples[[i]],1],y_hat),
-            mae(test_df[test_samples[[i]],1],y_hat), rsq(test_df[test_samples[[i]],1],y_hat))
+  y_hat <- model_nn %>% predict(as.matrix(test_df[test_samples[[i]],3:97]))
+  meas <- c(mse(test_df[test_samples[[i]],2],y_hat), rmse(test_df[test_samples[[i]],2],y_hat),
+            mae(test_df[test_samples[[i]],2],y_hat), rsq(test_df[test_samples[[i]],2],y_hat))
   test_nn <- rbind(test_nn,meas)
   rm(meas)
 }
@@ -936,10 +936,6 @@ round(plot_df[,c("incident_year",
                  "dolbeer_total", 
                  "total_cost_prediction_inc.sum", 
                  "total_cost_prediction_exc.sum")], digits = 0)
-library(xtable)
-plot_df[,2:7] <- round(plot_df[,2:7], digits = 0)
-table <- plot_df[,c(1,6,9,2,3)]
-xtable(table, digits = 0)
 
 ########################################################################################################################
 
