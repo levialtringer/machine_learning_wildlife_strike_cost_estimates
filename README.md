@@ -17,4 +17,4 @@ The files contained in this repository are:
 
 To perform the analysis and reproduce the objects presented in the paper, work through the `analysis.R` script. At the beginning, this script sources the `clean_nwsd.R` script to join and clean the `strike_data_raw_1.csv` and `strike_data_raw_2.csv` data. Then, the `analysis.R` script uses the user-defined functions sourced from `functions.R` to perfrom the analysis. The script is annotated to aid in replication.
 
-Questions concerning the analysis and research can be sent to <levi.altringer@colostate.edu>.
+Questions concerning the analysis and research can be sent to <levi.altringer@colostate.edu> or <levi.altringer@usda.gov>.
